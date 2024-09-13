@@ -26,6 +26,15 @@ router.post('/login', (req, res) => {
     if (email && password && verifyCredentials(email, password)) {
         //@ts-ignore
         req.session.isLoggedIn = true;
+        //@ts-ignore
+        req.session.email = email;
+    }
+    res.redirect('/');
+});
+router.get('/', (req, res) => {
+    console.log(req.session);
+    //@ts-ignore
+    if (req.session.isLoggedIn) {
         const loggedInHtml = `
       <!DOCTYPE html>
       <html lang="en">
@@ -35,7 +44,10 @@ router.post('/login', (req, res) => {
           <title>Profile</title>
       </head>
       <body>
-          <h2>Welcome, ${email}</h2>
+          
+          <h2>Welcome, ${
+        //@ts-ignore
+        req.session.email}</h2>
           <a href="/logout">Logout</a>
       </body>
       </html>
@@ -60,8 +72,28 @@ router.post('/login', (req, res) => {
         res.status(401).send(notAuthenticatedHtml);
     }
 });
+router.get('/logout', (req, res) => {
+    //destroy session redirect to login
+    req.session.destroy(() => {
+        console.log('session is over');
+        res.redirect('/login');
+    });
+});
+router.get('/protected', authRequired, (req, res) => {
+    res.send('Hey welcome to this protected route');
+});
 function verifyCredentials(email, password) {
     const hardCodedEmail = 'a@a.com';
     const hardCodedPassword = '1234';
     return email === hardCodedEmail && password === hardCodedPassword;
+}
+//Middleware:
+function authRequired(req, res, next) {
+    //@ts-ignore
+    if (req.session.isLoggedIn) {
+        next();
+        return;
+    }
+    res.status(403);
+    res.send('Action not authorized');
 }

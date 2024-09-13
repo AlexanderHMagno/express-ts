@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 
 interface RequestWithBody extends Request {
   body: { [key: string]: string | undefined };
@@ -30,6 +30,17 @@ router.post('/login', (req: RequestWithBody, res: Response) => {
   if (email && password && verifyCredentials(email, password)) {
     //@ts-ignore
     req.session.isLoggedIn = true;
+    //@ts-ignore
+    req.session.email = email;
+  }
+
+  res.redirect('/');
+});
+
+router.get('/', (req: Request, res: Response) => {
+  console.log(req.session);
+  //@ts-ignore
+  if (req.session.isLoggedIn) {
     const loggedInHtml = `
       <!DOCTYPE html>
       <html lang="en">
@@ -39,7 +50,11 @@ router.post('/login', (req: RequestWithBody, res: Response) => {
           <title>Profile</title>
       </head>
       <body>
-          <h2>Welcome, ${email}</h2>
+          
+          <h2>Welcome, ${
+            //@ts-ignore
+            req.session.email
+          }</h2>
           <a href="/logout">Logout</a>
       </body>
       </html>
@@ -64,11 +79,36 @@ router.post('/login', (req: RequestWithBody, res: Response) => {
   }
 });
 
+router.get('/logout', (req: Request, res: Response) => {
+  //destroy session redirect to login
+  req.session.destroy(() => {
+    console.log('session is over');
+    res.redirect('/login');
+  });
+});
+
+router.get('/protected', authRequired, (req: Request, res: Response) => {
+  res.send('Hey welcome to this protected route');
+});
+
 function verifyCredentials(email: string, password: string): boolean {
   const hardCodedEmail = 'a@a.com';
   const hardCodedPassword = '1234';
 
   return email === hardCodedEmail && password === hardCodedPassword;
+}
+
+//Middleware:
+
+function authRequired(req: Request, res: Response, next: NextFunction) {
+  //@ts-ignore
+  if (req.session.isLoggedIn) {
+    next();
+    return;
+  }
+
+  res.status(403);
+  res.send('Action not authorized');
 }
 
 export { router };

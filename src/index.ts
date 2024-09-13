@@ -23,7 +23,6 @@ app.use(
   })
 );
 
-app.get('/', (req: Request, res: Response) => res.redirect('/login'));
 app.use(router);
 
 app.listen(PORT, () => {
