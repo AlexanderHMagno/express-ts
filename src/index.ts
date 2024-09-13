@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import session from 'express-session';
 import { router } from './routes/loginRoutes';
 
 const app = express();
@@ -8,8 +9,19 @@ const PORT = 8000;
 
 //Add json Body to request
 app.use(express.json());
-//Add Url
+//Add UrlEncoded body to Request
 app.use(express.urlencoded({ extended: true }));
+
+//Add Session to request
+// Configure session middleware
+app.use(
+  session({
+    secret: 'your-secret-key', // Replace with your secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set to true if using HTTPS
+  })
+);
 
 app.get('/', (req: Request, res: Response) => res.redirect('/login'));
 app.use(router);
