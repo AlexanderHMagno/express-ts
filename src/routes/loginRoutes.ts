@@ -8,37 +8,6 @@ interface RequestWithBody extends Request {
 
 const router = AppRouter.getInstance();
 
-router.get('/login', (req: Request, res: Response) => {
-  res.send(`
-        <form action="/login" method="post">
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div>
-                <button type="submit">Login</button>
-            </div>
-        </form>
-  `);
-});
-
-router.post('/login', (req: RequestWithBody, res: Response) => {
-  const { email, password } = req.body;
-
-  if (email && password && verifyCredentials(email, password)) {
-    //@ts-ignore
-    req.session.isLoggedIn = true;
-    //@ts-ignore
-    req.session.email = email;
-  }
-
-  res.redirect('/');
-});
-
 router.get('/', (req: Request, res: Response) => {
   console.log(req.session);
   //@ts-ignore
@@ -73,7 +42,7 @@ router.get('/', (req: Request, res: Response) => {
     </head>
     <body>
         <h2>You are not authenticated</h2>
-        <a href="/login">Login</a>
+        <a href="/auth/login">Login</a>
     </body>
     </html>
   `;
@@ -85,7 +54,7 @@ router.get('/logout', (req: Request, res: Response) => {
   //destroy session redirect to login
   req.session.destroy(() => {
     console.log('session is over');
-    res.redirect('/login');
+    res.redirect('/auth/login');
   });
 });
 
@@ -98,13 +67,6 @@ router.get('/bottle', (req: Request, res: Response) => {
   bottle.showMe();
   res.send(bottle.greet('Ahoy', 2));
 });
-
-function verifyCredentials(email: string, password: string): boolean {
-  const hardCodedEmail = 'a@a.com';
-  const hardCodedPassword = '1234';
-
-  return email === hardCodedEmail && password === hardCodedPassword;
-}
 
 //Middleware:
 

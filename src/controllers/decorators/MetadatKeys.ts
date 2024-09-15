@@ -3,4 +3,5 @@ export enum MetadaKeys {
   Path = 'path',
   Use = 'use',
   Middleware = 'middleware',
+  BodyValidator = 'bodyValidator',
 }

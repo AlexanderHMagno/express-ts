@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { get } from './decorators/router';
+import { get, post } from './decorators/router';
 import { Controller } from './decorators/controller';
 import { use } from './decorators/middleware';
+import { bodyValidator } from './decorators/bodyValidator';
 
 function testingMiddleware(req: Request, res: Response, next: NextFunction) {
   console.log('Testing this middleware Decorator on the login get endpoint');
@@ -14,7 +15,7 @@ export class LoginController {
   @use(testingMiddleware)
   login(req: Request, res: Response): void {
     res.send(`
-      <form action="/login" method="post">
+      <form method="post">
           <div>
               <label for="email">Email:</label>
               <input type="email" id="email" name="email" required>
@@ -28,5 +29,27 @@ export class LoginController {
           </div>
       </form>
 `);
+  }
+
+  @post('/login')
+  @bodyValidator('email', 'password', 'name')
+  postLogin(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    if (verifyCredentials(email, password)) {
+      //@ts-ignore
+      req.session.isLoggedIn = true;
+      //@ts-ignore
+      req.session.email = email;
+    }
+
+    res.redirect('/');
+
+    function verifyCredentials(email: string, password: string): boolean {
+      const hardCodedEmail = 'a@a.com';
+      const hardCodedPassword = '1234';
+
+      return email === hardCodedEmail && password === hardCodedPassword;
+    }
   }
 }

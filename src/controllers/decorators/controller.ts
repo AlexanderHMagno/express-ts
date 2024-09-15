@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { AppRouter } from '../../AppRouter';
 import { Methods } from './Methods';
 import { MetadaKeys } from './MetadatKeys';
+import { attachValidatorToMiddleware } from './bodyValidator';
 export function Controller(routePrefix: string) {
   const Router = AppRouter.getInstance();
   return function (target: Function) {
@@ -14,16 +15,23 @@ export function Controller(routePrefix: string) {
         key
       );
 
-      const middleware = Reflect.getMetadata(
-        MetadaKeys.Middleware,
-        target.prototype,
-        key
-      );
+      const middleware =
+        Reflect.getMetadata(MetadaKeys.Middleware, target.prototype, key) || [];
+
+      const bodyValidtorFunc =
+        Reflect.getMetadata(MetadaKeys.BodyValidator, target.prototype, key) ||
+        [];
+      const validate = attachValidatorToMiddleware(bodyValidtorFunc);
 
       //This will be set as /prefix/path, and the handler is the function that was attached by
       // the routes decorator using reflect-metadata
       if (path) {
-        Router[method](`${routePrefix}${path}`, ...middleware, routeHandler);
+        Router[method](
+          `${routePrefix}${path}`,
+          ...middleware,
+          validate,
+          routeHandler
+        );
       }
     });
   };

@@ -5,33 +5,6 @@ const decorators_1 = require("./decorators");
 const AppRouter_1 = require("../AppRouter");
 const router = AppRouter_1.AppRouter.getInstance();
 exports.router = router;
-router.get('/login', (req, res) => {
-    res.send(`
-        <form action="/login" method="post">
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div>
-                <button type="submit">Login</button>
-            </div>
-        </form>
-  `);
-});
-router.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    if (email && password && verifyCredentials(email, password)) {
-        //@ts-ignore
-        req.session.isLoggedIn = true;
-        //@ts-ignore
-        req.session.email = email;
-    }
-    res.redirect('/');
-});
 router.get('/', (req, res) => {
     console.log(req.session);
     //@ts-ignore
@@ -66,7 +39,7 @@ router.get('/', (req, res) => {
     </head>
     <body>
         <h2>You are not authenticated</h2>
-        <a href="/login">Login</a>
+        <a href="/auth/login">Login</a>
     </body>
     </html>
   `;
@@ -77,7 +50,7 @@ router.get('/logout', (req, res) => {
     //destroy session redirect to login
     req.session.destroy(() => {
         console.log('session is over');
-        res.redirect('/login');
+        res.redirect('/auth/login');
     });
 });
 router.get('/protected', authRequired, (req, res) => {
@@ -88,11 +61,6 @@ router.get('/bottle', (req, res) => {
     bottle.showMe();
     res.send(bottle.greet('Ahoy', 2));
 });
-function verifyCredentials(email, password) {
-    const hardCodedEmail = 'a@a.com';
-    const hardCodedPassword = '1234';
-    return email === hardCodedEmail && password === hardCodedPassword;
-}
 //Middleware:
 function authRequired(req, res, next) {
     //@ts-ignore
