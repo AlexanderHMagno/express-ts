@@ -1,10 +1,12 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { Bottle } from './decorators';
+import { AppRouter } from '../AppRouter';
 
 interface RequestWithBody extends Request {
   body: { [key: string]: string | undefined };
 }
 
-const router = Router();
+const router = AppRouter.getInstance();
 
 router.get('/login', (req: Request, res: Response) => {
   res.send(`
@@ -89,6 +91,12 @@ router.get('/logout', (req: Request, res: Response) => {
 
 router.get('/protected', authRequired, (req: Request, res: Response) => {
   res.send('Hey welcome to this protected route');
+});
+
+router.get('/bottle', (req: Request, res: Response) => {
+  const bottle = new Bottle('Khoury');
+  bottle.showMe();
+  res.send(bottle.greet('Ahoy', 2));
 });
 
 function verifyCredentials(email: string, password: string): boolean {

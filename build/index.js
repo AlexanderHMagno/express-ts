@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
 const loginRoutes_1 = require("./routes/loginRoutes");
+require("./controllers/LoginController");
 const app = (0, express_1.default)();
 const PORT = 8000;
 //Middlewares
@@ -22,6 +23,7 @@ app.use((0, express_session_1.default)({
     cookie: { secure: false }, // Set to true if using HTTPS
 }));
 app.use(loginRoutes_1.router);
+// app.use(AppRouter.getInstance());
 app.listen(PORT, () => {
     console.log(`Listening on Port: ${PORT}`);
 });

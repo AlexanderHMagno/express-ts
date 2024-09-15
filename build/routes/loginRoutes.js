@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
-const express_1 = require("express");
-const router = (0, express_1.Router)();
+const decorators_1 = require("./decorators");
+const AppRouter_1 = require("../AppRouter");
+const router = AppRouter_1.AppRouter.getInstance();
 exports.router = router;
 router.get('/login', (req, res) => {
     res.send(`
@@ -81,6 +82,11 @@ router.get('/logout', (req, res) => {
 });
 router.get('/protected', authRequired, (req, res) => {
     res.send('Hey welcome to this protected route');
+});
+router.get('/bottle', (req, res) => {
+    const bottle = new decorators_1.Bottle('Khoury');
+    bottle.showMe();
+    res.send(bottle.greet('Ahoy', 2));
 });
 function verifyCredentials(email, password) {
     const hardCodedEmail = 'a@a.com';
