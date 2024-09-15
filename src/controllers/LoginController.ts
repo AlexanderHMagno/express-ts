@@ -1,10 +1,17 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { get } from './decorators/router';
 import { Controller } from './decorators/controller';
+import { use } from './decorators/middleware';
+
+function testingMiddleware(req: Request, res: Response, next: NextFunction) {
+  console.log('Testing this middleware Decorator on the login get endpoint');
+  next();
+}
 
 @Controller('/auth')
 export class LoginController {
   @get('/login')
+  @use(testingMiddleware)
   login(req: Request, res: Response): void {
     res.send(`
       <form action="/login" method="post">

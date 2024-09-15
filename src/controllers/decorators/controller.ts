@@ -13,10 +13,17 @@ export function Controller(routePrefix: string) {
         target.prototype,
         key
       );
+
+      const middleware = Reflect.getMetadata(
+        MetadaKeys.Middleware,
+        target.prototype,
+        key
+      );
+
       //This will be set as /prefix/path, and the handler is the function that was attached by
       // the routes decorator using reflect-metadata
       if (path) {
-        Router[method](`${routePrefix}${path}`, routeHandler);
+        Router[method](`${routePrefix}${path}`, ...middleware, routeHandler);
       }
     });
   };
