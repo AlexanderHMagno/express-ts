@@ -126,6 +126,9 @@ class ExampleController {
 ## Application Views
 
 ![LogedIn](public/images/LogedIn.png)
+![Login](public/images/Login.png)
+![Protected](public/images/protected.png)
+![Unauthorized](public/images/Unauthorized.png)
 
 ## License
 
