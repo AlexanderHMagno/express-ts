@@ -49,6 +49,13 @@ yarn dev
 
 The server will be running on `http://localhost:8000`.
 
+To Access the aplication only a harcoded email will work
+
+```
+Email : a@a.com
+Password: 1234
+```
+
 ## Project Structure
 
 ```
