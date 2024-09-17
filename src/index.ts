@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import session from 'express-session';
-import { router } from './routes/loginRoutes';
 import { AppRouter } from './AppRouter';
 import './controllers/LoginController';
+import './controllers/RootController';
 
 const app = express();
 const PORT = 8000;
@@ -25,8 +25,7 @@ app.use(
   })
 );
 
-app.use(router);
-// app.use(AppRouter.getInstance());
+app.use(AppRouter.getInstance());
 
 app.listen(PORT, () => {
   console.log(`Listening on Port: ${PORT}`);
