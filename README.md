@@ -125,7 +125,7 @@ class ExampleController {
 
 ## Application Views
 
-![LogedIn]("/public/images/LogedIn.png")
+![LogedIn](public/images/LogedIn.png)
 
 ## License
 
